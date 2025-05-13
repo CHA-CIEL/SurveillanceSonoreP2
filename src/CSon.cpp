@@ -20,12 +20,15 @@ esp_err_t CSon::Setup()
 
 esp_err_t CSon::SamplesDmaAcquisition()
 {
-    // Lecture des données via DMA
-    result = i2s_read(I2S_NUM_0, &i2sData, sizeof(i2sData), &bytesRead, portMAX_DELAY);
+    // Nombre d'octets lus en mémoire DMA
+    size_t bytesRead;
+
+    // Capture des données audio
+    result = i2s_read(I2S_NUM_0, &this->i2sData, sizeof(this->i2sData), &bytesRead, portMAX_DELAY);
 
     if (result == ESP_OK)
     {
-        int16_t samplesRead = bytesRead / 4; // 4 octets par échantillon (32 bits)
+        int16_t samplesRead = bytesRead / 4; // Chaque échantillon est sur 32 bits (4 octets), et on prend les 16 bits de poids fort
 
         if (samplesRead > 0)
         {
@@ -33,21 +36,16 @@ esp_err_t CSon::SamplesDmaAcquisition()
 
             for (int16_t i = 0; i < samplesRead; ++i)
             {
-                // Décalage pour obtenir la valeur sur 24 bits
-                i2sData[i] = i2sData[i] >> 8;
+                i2sData[i] = i2sData[i] >> 8; // Extraction des bits de poids fort
 
-                // Calcul de la moyenne
                 mean += abs(i2sData[i]);
 
-                // Mise à jour de la valeur crête
                 if (abs(i2sData[i]) > niveauSonoreCrete)
-                {
                     niveauSonoreCrete = abs(i2sData[i]);
-                }
             }
 
-            // Calcul de la moyenne
-            niveauSonoreMoyen = mean / samplesRead;
+            // Calcul de la moyenne du niveau sonore redressé
+            this->niveauSonoreMoyen = mean / samplesRead;
         }
     }
 
