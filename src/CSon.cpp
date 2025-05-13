@@ -21,7 +21,7 @@ CSon()
             .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,      // Bits par échantillon
             .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,      // Format des canaux
             .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
-            .intr_alloc_flags = 0,      // ESP_INTR_FLAG_LEVEL1, // Niveau d'interruption
+            .intr_alloc_flags = 0,      // ESP_INTR_FLAG_LEVEL1, 
             .dma_buf_count = 8,         // Nombre de buffers DMA
             .dma_buf_len = DMA_BUF_LEN, // Taille du buffer DMA
             .use_apll = false,
