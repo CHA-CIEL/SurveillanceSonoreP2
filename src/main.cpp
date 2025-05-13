@@ -1,11 +1,25 @@
+#include "Wire.h"
+#include "SSD1306.h"
 #include "CSon.h"
 #include <Arduino.h>
 
 CSon son;
 
+SSD1306Wire ecranOled(0x3c, 5, 4);
+
 void setup()
 {
-    Serial.begin(115200);
+    ecranOled.init();
+
+    ecranOled.clear();
+
+    ecranOled.setFont(ArialMT_Plain_16);
+
+    ecranOled.drawString(0, 10, "Mon Appli v1.0");
+
+    ecranOled.display();
+
+    Serial.begin(9600);
 
     esp_err_t initResult = son.Setup();
     if (initResult != ESP_OK)
@@ -25,7 +39,7 @@ void loop()
     {
         Serial.print("Niveau moyen: ");
         Serial.print(son.niveauSonoreMoyen);
-        Serial.print(" | Crete: ");
+        Serial.print("Crete: ");
         Serial.println(son.niveauSonoreCrete);
     }
     else
