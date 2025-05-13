@@ -1,22 +1,37 @@
-#include "Wire.h"
-#include "SSD1306.h"
+#include "CSon.h"
+#include <Arduino.h>
 
-SSD1306Wire ecranOled(0x3c, 5, 4);
+CSon son;
 
-void setup() {
-   ecranOled.init();
-    
-    ecranOled.clear();
+void setup()
+{
+    Serial.begin(115200);
 
-    ecranOled.setFont(ArialMT_Plain_16);
+    esp_err_t initResult = son.Setup();
+    if (initResult != ESP_OK)
+    {
+        Serial.println("Erreur initialisation I2S !");
+        while (1);
+    }
 
-    ecranOled.drawString(0, 10, "Mon Appli v1.0");
-
-    ecranOled.display();
+    Serial.println("Systeme pret - Acquisition en cours...");
 }
 
-void loop() {
-  
+void loop()
+{
+    esp_err_t readResult = son.SamplesDmaAcquisition();
+
+    if (readResult == ESP_OK)
+    {
+        Serial.print("Niveau moyen: ");
+        Serial.print(son.niveauSonoreMoyen);
+        Serial.print(" | Crete: ");
+        Serial.println(son.niveauSonoreCrete);
+    }
+    else
+    {
+        Serial.println("Erreur acquisition !");
+    }
+
+    delay(100);
 }
-
-
